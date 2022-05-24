@@ -1,12 +1,15 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.4;
 
 import "hardhat/console.sol";
+import "usingtellor/contracts/UsingTellor.sol";
 
-contract Greeter {
+//This contract has access to all functions in UsingTellor
+contract Greeter is UsingTellor {
     string private greeting;
-
-    constructor(string memory _greeting) {
+    uint256 public btcPrice;
+    
+    constructor(string memory _greeting, address payable _tellorAddress) UsingTellor(_tellorAddress) {
         console.log("Deploying a Greeter with greeting:", _greeting);
         greeting = _greeting;
     }
@@ -19,4 +22,17 @@ contract Greeter {
         console.log("Changing greeting from '%s' to '%s'", greeting, _greeting);
         greeting = _greeting;
     }
+
+    function setBtcPrice() public {
+      bytes memory _b = abi.encode("SpotPrice",abi.encode("btc","usd"));
+      bytes32 _btcQueryId = keccak256(_b);
+
+      bool _didGet;
+      uint256 _timestamp;
+      bytes memory _value;
+
+      (_didGet, _value, _timestamp) = getCurrentValue(_btcQueryId);
+      btcPrice = abi.decode(_value,(uint256));
+    }
+
 }
