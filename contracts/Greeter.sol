@@ -31,7 +31,7 @@ contract Greeter is UsingTellor {
       uint256 _timestamp;
       bytes memory _value;
 
-      (_didGet, _value, _timestamp) = getCurrentValue(_btcQueryId);
+      (_value, _timestamp) = getDataBefore(_btcQueryId, block.timestamp-10 minutes);
       btcPrice = abi.decode(_value,(uint256));
     }
 
